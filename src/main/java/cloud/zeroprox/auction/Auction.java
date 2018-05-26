@@ -279,8 +279,8 @@ public class Auction {
                         }
                         Sponge.getServer()
                                 .getOnlinePlayers()
-                                .forEach(player -> player.sendMessage(ChatTypes.ACTION_BAR,
-                                        this.t_auction_message.apply(ImmutableMap.of(
+                                .forEach(player -> player.sendMessage(
+                                		this.t_auction_message.apply(ImmutableMap.of(
                                                 "starter", Sponge.getServer().getPlayer(this.auctionStarter.get()).get().getName(),
                                                 "item", this.auctionItem.get().getQuantity() + "x " + this.auctionItem.get().getTranslation().get(player.getLocale()),
                                                 "price", this.auctionBid,
@@ -293,7 +293,7 @@ public class Auction {
                             if (bidder.isPresent()) {
                                 Sponge.getServer()
                                         .getOnlinePlayers()
-                                        .forEach(player -> player.sendMessage(ChatTypes.ACTION_BAR,
+                                        .forEach(player -> player.sendMessage(
                                                 this.t_auction_sold.apply(ImmutableMap.of("price", this.auctionBid, "player", bidder.get().getName())).build()));
                                 bidder.get().getInventory().offer(this.auctionItem.get().copy());
                                 bidder.get().sendMessage(this.t_you_recieved.apply(ImmutableMap.of("item", this.auctionItem.get().getTranslation().get(bidder.get().getLocale()))).build());
@@ -301,7 +301,7 @@ public class Auction {
                             } else {
                                 Sponge.getServer()
                                         .getOnlinePlayers()
-                                        .forEach(player -> player.sendMessage(ChatTypes.ACTION_BAR, this.t_auction_nobids.apply().build()));
+                                        .forEach(player -> player.sendMessage(this.t_auction_nobids.apply().build()));
                                 Sponge.getServer().getPlayer(this.auctionStarter.get()).ifPresent(player -> player.getInventory().offer(this.auctionItem.get().copy()));
                                 this.economyService.getOrCreateAccount(this.auctionBidder.get()).ifPresent(uniqueAccount -> uniqueAccount.deposit(economyService.getDefaultCurrency(), BigDecimal.valueOf(this.auctionBid), Sponge.getCauseStackManager().getCurrentCause()));
                             }
@@ -311,9 +311,7 @@ public class Auction {
                                 if (starter.isPresent())
                                     starter.get().getInventory().offer(this.auctionItem.get().copy());
                             }
-                            Sponge.getServer()
-                                    .getOnlinePlayers()
-                                    .forEach(player -> player.sendMessage(ChatTypes.ACTION_BAR,this.t_auction_nobids.apply().build()));
+                            Sponge.getServer().getBroadcastChannel().send(this.t_auction_nobids.apply().build());
                         }
                         this.auctionBid = 0;
                         this.auctionItem = Optional.empty();
